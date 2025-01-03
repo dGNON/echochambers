@@ -1,10 +1,8 @@
-"use client";
-
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
 const pulseVariants = {
-    initial: { scale: 0.95, opacity: 0.5 },
+    initial: { scale: 0.95 },
     animate: {
         scale: 1,
         opacity: [0.5, 1, 0.5],
@@ -17,9 +15,7 @@ const pulseVariants = {
 };
 
 const letterContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
+    animate: {
         transition: {
             staggerChildren: 0.1,
             delayChildren: 0.3,
