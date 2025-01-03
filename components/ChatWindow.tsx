@@ -88,21 +88,21 @@ export function ChatWindow({ roomId, initialMessages = [] }: ChatWindowProps) {
                 <div className="space-y-4 p-3 py-1">
                     {initialMessages.map((message) => (
                         <div key={message.id} className="space-y-1">
-                            <div className="flex items-center space-x-1">
-                                <p className="text-xs font-medium font-mono">{message.sender.username}</p>
-                                <Badge variant="outline" className="text-[10px]">
+                            <div className="flex items-center space-x-1 overflow-hidden">
+                                <p className="text-xs font-medium font-mono overflow-hidden text-ellipsis break-all whitespace-pre-wrap">{message.sender.username}</p>
+                                <Badge variant="outline" className="text-[10px] overflow-hidden text-ellipsis break-all whitespace-pre-wrap">
                                     {message.sender.model}
                                 </Badge>
-                                <span className="text-[10px] text-muted-foreground">{formatTimestamp(message.timestamp)}</span>
+                                <span className="text-[10px] text-muted-foreground shrink-0">{formatTimestamp(message.timestamp)}</span>
                             </div>
                             <div className="group relative overflow-hidden rounded-xl border bg-gradient-to-b from-muted/50 to-muted/0 backdrop-blur-sm transition-colors hover:bg-muted/50">
                                 <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-primary/0 opacity-0 transition-opacity group-hover:opacity-100" />
-                                <div className="relative p-3 overflow-hidden">
+                                <div className="relative p-3 overflow-hidden break-all whitespace-pre-wrap">
                                     <ReactMarkdown
-                                        className="prose prose-xs dark:prose-invert max-w-none break-words text-sm"
+                                        className="prose prose-xs dark:prose-invert max-w-none break-all whitespace-pre-wrap overflow-hidden"
                                         components={{
                                             p({ children }) {
-                                                return <p className="mb-2 last:mb-0 text-sm whitespace-pre-wrap break-words">{children}</p>;
+                                                return <p className="mb-2 last:mb-0 text-sm whitespace-pre-wrap break-all overflow-hidden">{children}</p>;
                                             },
                                             code({ className, children, ...props }: ComponentPropsWithoutRef<"code">) {
                                                 const match = /language-(\w+)/.exec(className || "");
@@ -133,25 +133,25 @@ export function ChatWindow({ roomId, initialMessages = [] }: ChatWindowProps) {
                                                 );
                                             },
                                             ul({ children }) {
-                                                return <ul className="list-disc pl-4 mb-2 space-y-1 text-sm break-words">{children}</ul>;
+                                                return <ul className="list-disc pl-4 mb-2 space-y-1 text-sm break-all whitespace-pre-wrap overflow-hidden">{children}</ul>;
                                             },
                                             ol({ children }) {
-                                                return <ol className="list-decimal pl-4 mb-2 space-y-1 text-sm break-words">{children}</ol>;
+                                                return <ol className="list-decimal pl-4 mb-2 space-y-1 text-sm break-all whitespace-pre-wrap overflow-hidden">{children}</ol>;
                                             },
                                             li({ children }) {
-                                                return <li className="mb-1 text-sm break-words">{children}</li>;
+                                                return <li className="mb-1 text-sm break-all whitespace-pre-wrap overflow-hidden">{children}</li>;
                                             },
                                             h1({ children }) {
-                                                return <h1 className="text-lg font-semibold mb-2 mt-3 break-words">{children}</h1>;
+                                                return <h1 className="text-lg font-semibold mb-2 mt-3 break-all whitespace-pre-wrap overflow-hidden">{children}</h1>;
                                             },
                                             h2({ children }) {
-                                                return <h2 className="text-base font-semibold mb-2 mt-3 break-words">{children}</h2>;
+                                                return <h2 className="text-base font-semibold mb-2 mt-3 break-all whitespace-pre-wrap overflow-hidden">{children}</h2>;
                                             },
                                             h3({ children }) {
-                                                return <h3 className="text-sm font-semibold mb-2 mt-3 break-words">{children}</h3>;
+                                                return <h3 className="text-sm font-semibold mb-2 mt-3 break-all whitespace-pre-wrap overflow-hidden">{children}</h3>;
                                             },
                                             blockquote({ children }) {
-                                                return <blockquote className="border-l-2 border-muted pl-4 italic my-2 break-words">{children}</blockquote>;
+                                                return <blockquote className="border-l-2 border-muted pl-4 italic my-2 break-all whitespace-pre-wrap overflow-hidden">{children}</blockquote>;
                                             },
                                         }}
                                     >
@@ -179,21 +179,21 @@ export function ChatWindow({ roomId, initialMessages = [] }: ChatWindowProps) {
                 )}
                 {messages.map((message) => (
                     <div key={message.id} className="space-y-1">
-                        <div className="flex items-center space-x-1">
-                            <p className="text-xs font-medium font-mono">{message.sender.username}</p>
-                            <Badge variant="outline" className="text-[10px] px-1">
+                        <div className="flex items-center space-x-1 overflow-hidden">
+                            <p className="text-xs font-medium font-mono overflow-hidden text-ellipsis break-all whitespace-pre-wrap">{message.sender.username}</p>
+                            <Badge variant="outline" className="text-[10px] overflow-hidden text-ellipsis break-all whitespace-pre-wrap">
                                 {message.sender.model}
                             </Badge>
-                            <span className="text-[10px] text-muted-foreground">{formatTimestamp(message.timestamp)}</span>
+                            <span className="text-[10px] text-muted-foreground shrink-0">{formatTimestamp(message.timestamp)}</span>
                         </div>
                         <div className="group relative overflow-hidden rounded-xl border bg-gradient-to-b from-muted/50 to-muted/0 backdrop-blur-sm transition-colors hover:bg-muted/50">
                             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-primary/0 opacity-0 transition-opacity group-hover:opacity-100" />
-                            <div className="relative p-3 overflow-hidden">
+                            <div className="relative p-3 overflow-hidden break-all whitespace-pre-wrap">
                                 <ReactMarkdown
-                                    className="prose prose-xs dark:prose-invert max-w-none break-words text-sm"
+                                    className="prose prose-xs dark:prose-invert max-w-none break-all whitespace-pre-wrap overflow-hidden"
                                     components={{
                                         p({ children }) {
-                                            return <p className="mb-2 last:mb-0 text-sm whitespace-pre-wrap break-words">{children}</p>;
+                                            return <p className="mb-2 last:mb-0 text-sm whitespace-pre-wrap break-all overflow-hidden">{children}</p>;
                                         },
                                         code({ className, children, ...props }: ComponentPropsWithoutRef<"code">) {
                                             const match = /language-(\w+)/.exec(className || "");
@@ -224,25 +224,25 @@ export function ChatWindow({ roomId, initialMessages = [] }: ChatWindowProps) {
                                             );
                                         },
                                         ul({ children }) {
-                                            return <ul className="list-disc pl-4 mb-2 space-y-1 text-sm break-words">{children}</ul>;
+                                            return <ul className="list-disc pl-4 mb-2 space-y-1 text-sm break-all whitespace-pre-wrap overflow-hidden">{children}</ul>;
                                         },
                                         ol({ children }) {
-                                            return <ol className="list-decimal pl-4 mb-2 space-y-1 text-sm break-words">{children}</ol>;
+                                            return <ol className="list-decimal pl-4 mb-2 space-y-1 text-sm break-all whitespace-pre-wrap overflow-hidden">{children}</ol>;
                                         },
                                         li({ children }) {
-                                            return <li className="mb-1 text-sm break-words">{children}</li>;
+                                            return <li className="mb-1 text-sm break-all whitespace-pre-wrap overflow-hidden">{children}</li>;
                                         },
                                         h1({ children }) {
-                                            return <h1 className="text-lg font-semibold mb-2 mt-3 break-words">{children}</h1>;
+                                            return <h1 className="text-lg font-semibold mb-2 mt-3 break-all whitespace-pre-wrap overflow-hidden">{children}</h1>;
                                         },
                                         h2({ children }) {
-                                            return <h2 className="text-base font-semibold mb-2 mt-3 break-words">{children}</h2>;
+                                            return <h2 className="text-base font-semibold mb-2 mt-3 break-all whitespace-pre-wrap overflow-hidden">{children}</h2>;
                                         },
                                         h3({ children }) {
-                                            return <h3 className="text-sm font-semibold mb-2 mt-3 break-words">{children}</h3>;
+                                            return <h3 className="text-sm font-semibold mb-2 mt-3 break-all whitespace-pre-wrap overflow-hidden">{children}</h3>;
                                         },
                                         blockquote({ children }) {
-                                            return <blockquote className="border-l-2 border-muted pl-4 italic my-2 break-words">{children}</blockquote>;
+                                            return <blockquote className="border-l-2 border-muted pl-4 italic my-2 break-all whitespace-pre-wrap overflow-hidden">{children}</blockquote>;
                                         },
                                     }}
                                 >

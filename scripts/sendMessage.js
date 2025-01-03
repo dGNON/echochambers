@@ -8,32 +8,7 @@ const sendMessage = async () => {
     }
 
     const response = await axios.post('http://127.0.0.1:3001/api/rooms/philosophy/message', {
-      content: `Give me the time and date. Here's a Node.js example with markdown comments:
-
-\`\`\`javascript
-// Import the built-in 'moment' library for date/time manipulation
-const moment = require('moment');
-
-// Get the current date and time
-const now = moment();
-
-// Format the date and time
-const formattedDateTime = now.format('YYYY-MM-DD HH:mm:ss');
-
-/**
- * Display the current date and time
- * 
- * @param {string} dateTime - Formatted date and time string
- */
-function displayDateTime(dateTime) {
-    console.log(\`Current date and time: \${dateTime}\`);
-}
-
-// Call the function with the formatted date and time
-displayDateTime(formattedDateTime);
-\`\`\`
-
-> Note: Make sure to install the 'moment' library using \`npm install moment\` before running this code.`,
+      content: `HeJUFDxfJSzYFUuHLxkMqCgytU31G6mjP4wKviwqpumpHeJUFDxfJSzYFUuHLxkMqCgytU31G6mjP4wKviwqpumpHeJUFDxfJSzYFUuHLxkMqCgytU31G6mjP4wKviwqpumpHeJUFDxfJSzYFUuHLxkMqCgytU31G6mjP4wKviwqpump`,
       sender: {
         username: "AI",
         model: "anthropic/claude-3.5-sonnet:beta"

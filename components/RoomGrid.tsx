@@ -47,24 +47,24 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
                             <SheetHeader className="space-y-4">
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <SheetTitle className="text-2xl text-primary">{room.name}</SheetTitle>
+                                        <SheetTitle className="text-2xl text-primary break-all whitespace-pre-wrap">{room.name}</SheetTitle>
                                     </div>
-                                    <p className="text-muted-foreground">{room.topic}</p>
+                                    <p className="text-muted-foreground break-all whitespace-pre-wrap">{room.topic}</p>
                                 </div>
                                 <div className="flex items-center gap-4 text-sm">
                                     <div className="flex items-center gap-1.5">
-                                        <Users className="h-3.5 w-3.5 text-muted-foreground" />
-                                        <span className="font-medium">{getParticipantCount(room.id)} participants</span>
+                                        <Users className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                        <span className="font-medium break-all whitespace-pre-wrap">{getParticipantCount(room.id)} participants</span>
                                     </div>
-                                    <Separator orientation="vertical" className="h-4" />
+                                    <Separator orientation="vertical" className="h-4 shrink-0" />
                                     <div className="flex items-center gap-1.5">
-                                        <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
-                                        <span className="font-medium">{room.messageCount} messages</span>
+                                        <MessageSquare className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                        <span className="font-medium break-all whitespace-pre-wrap">{room.messageCount} messages</span>
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap gap-1.5">
                                     {room.tags.map((tag) => (
-                                        <Badge key={tag} variant="outline" className="bg-background/50">
+                                        <Badge key={tag} variant="outline" className="bg-background/50 break-all whitespace-pre-wrap">
                                             {tag}
                                         </Badge>
                                     ))}
@@ -92,28 +92,28 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
                     <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-primary/0 opacity-0 transition-opacity group-hover:opacity-100" />
                     <div className="relative px-3 py-2 h-[180px] flex flex-col justify-between">
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-md font-semibold text-primary group-hover:text-primary/80 transition-colors">{room.name}</h3>
+                            <h3 className="text-md font-semibold text-primary group-hover:text-primary/80 transition-colors break-all overflow-hidden text-ellipsis">{room.name}</h3>
                             <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setFullscreenRoom(room.id)}>
                                 <Maximize2 className="h-4 w-4" />
                             </Button>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-2">{room.topic}</p>
+                        <p className="text-sm text-muted-foreground mb-2 break-all whitespace-pre-wrap overflow-hidden">{room.topic}</p>
                         <div className="flex flex-wrap gap-1 mb-2">
                             {room.tags.map((tag) => (
-                                <Badge key={tag} variant="outline" className="bg-background/90 px-2 py-2">
+                                <Badge key={tag} variant="outline" className="bg-background/90 px-2 py-2 break-all whitespace-pre-wrap">
                                     {tag}
                                 </Badge>
                             ))}
                         </div>
                         <div className="flex items-center gap-4 text-sm mb-2">
                             <div className="flex items-center gap-1.5">
-                                <Users className="h-3.5 w-3.5 text-muted-foreground" />
-                                <span className="font-medium">{getParticipantCount(room.id)} participants</span>
+                                <Users className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                <span className="font-medium break-all whitespace-pre-wrap">{getParticipantCount(room.id)} participants</span>
                             </div>
-                            <Separator orientation="vertical" className="h-4" />
+                            <Separator orientation="vertical" className="h-4 shrink-0" />
                             <div className="flex items-center gap-1.5">
-                                <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
-                                <span className="font-medium">{room.messageCount} messages</span>
+                                <MessageSquare className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                <span className="font-medium break-all whitespace-pre-wrap">{room.messageCount} messages</span>
                             </div>
                         </div>
                     </div>
