@@ -28,7 +28,7 @@ interface RoomGridProps {
 
 export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
     const [fullscreenRoom, setFullscreenRoom] = useState<string | null>(null);
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     const [showParticipants, setShowParticipants] = useState(false);
 
     // Get participant count for a room
@@ -39,8 +39,8 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
     // Get all unique participants across all rooms
     const getAllParticipants = () => {
         const participants = new Set<string>();
-        Object.values(roomParticipants).forEach(roomUsers => {
-            roomUsers.forEach(user => participants.add(user));
+        Object.values(roomParticipants).forEach((roomUsers) => {
+            roomUsers.forEach((user) => participants.add(user));
         });
         return Array.from(participants);
     };
@@ -88,11 +88,7 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
                         </div>
                         {/* Chat Area */}
                         <div className="relative flex-1 overflow-hidden bg-muted/5 p-3">
-                            <ChatWindow 
-                                key={`fullscreen-${room.id}`}
-                                roomId={room.id} 
-                                initialMessages={room.messages} 
-                            />
+                            <ChatWindow key={`fullscreen-${room.id}`} roomId={room.id} initialMessages={room.messages} />
                         </div>
                     </div>
                 </SheetContent>
@@ -106,17 +102,8 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-                                className="hover:bg-muted/80"
-                            >
-                                {viewMode === 'grid' ? (
-                                    <List className="h-4 w-4" />
-                                ) : (
-                                    <LayoutGrid className="h-4 w-4" />
-                                )}
+                            <Button variant="ghost" size="icon" onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")} className="hover:bg-muted/80">
+                                {viewMode === "grid" ? <List className="h-4 w-4" /> : <LayoutGrid className="h-4 w-4" />}
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -128,12 +115,7 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setShowParticipants(!showParticipants)}
-                                className="hover:bg-muted/80"
-                            >
+                            <Button variant="ghost" size="icon" onClick={() => setShowParticipants(!showParticipants)} className="hover:bg-muted/80">
                                 <Terminal className="h-4 w-4" />
                             </Button>
                         </TooltipTrigger>
@@ -145,16 +127,11 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
 
                 {showParticipants && (
                     <Dialog open={showParticipants} onOpenChange={setShowParticipants}>
-                        <DialogContent className="bg-background/95 backdrop-blur-sm border-border p-0 overflow-hidden">
+                        <DialogContent className="w-[calc(100%-3rem)] sm:max-w-[444px] rounded-xl bg-background/95 backdrop-blur-sm border-border p-0 overflow-hidden">
                             <DialogHeader className="sr-only">
                                 <DialogTitle>Room Participants</DialogTitle>
                             </DialogHeader>
-                            <motion.div 
-                                className="relative flex flex-col items-start min-w-[300px]"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5 }}
-                            >
+                            <motion.div className="relative flex flex-col items-start min-w-[300px]" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                                 {/* Terminal header */}
                                 <div className="flex gap-2 w-full border-b border-border p-4 bg-muted/50">
                                     <div className="h-3 w-3 rounded-full bg-red-500/50" />
@@ -169,15 +146,9 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
                                         <span>list participants</span>
                                     </div>
                                     <ScrollArea className="h-[300px] w-full">
-                                        <div className="space-y-2">
+                                        <div className="space-y-1">
                                             {getAllParticipants().map((participant, index) => (
-                                                <motion.div
-                                                    key={participant}
-                                                    className="flex items-center gap-2 text-foreground pl-4"
-                                                    initial={{ opacity: 0, x: -10 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ delay: index * 0.1 }}
-                                                >
+                                                <motion.div key={participant} className="flex items-center gap-2 text-foreground pl-4" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.1 }}>
                                                     <span className="text-muted-foreground">→</span>
                                                     <span className="font-mono">{participant}</span>
                                                 </motion.div>
@@ -191,7 +162,7 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
                 )}
             </div>
 
-            {viewMode === 'grid' ? (
+            {viewMode === "grid" ? (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {sortedRooms.map((room) => (
                         <div key={room.id} className="group relative overflow-hidden rounded-xl border bg-gradient-to-b from-muted/50 to-muted/0 backdrop-blur-sm transition-colors hover:bg-muted/50 flex flex-col h-[444px]">
@@ -224,11 +195,7 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
                                 </div>
                             </div>
                             <div className="relative flex-1 overflow-hidden border-t bg-muted/5">
-                                <ChatWindow 
-                                    key={`preview-${room.id}`}
-                                    roomId={room.id} 
-                                    initialMessages={room.messages} 
-                                />
+                                <ChatWindow key={`preview-${room.id}`} roomId={room.id} initialMessages={room.messages} />
                             </div>
                         </div>
                     ))}
