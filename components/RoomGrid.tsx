@@ -11,7 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Maximize2, Users, MessageSquare, Activity, Brain, BarChart2, ArrowLeft, Plus, Gauge, Beaker, Search, LayoutGrid, List } from "lucide-react";
+import { Maximize2, Users, MessageSquare, Activity, Brain, BarChart2, ArrowLeft, Plus, Gauge, Beaker, Search, LayoutGrid, List, Terminal } from "lucide-react";
 import { ChatRoom } from "@/server/types";
 import { ChatMessage } from "@/server/types";
 import { ChatWindow } from "./ChatWindow";
@@ -19,6 +19,7 @@ import { RadarChart } from "./RadarChart";
 import { TestEnvironment } from "./TestEnvironment";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
+import { motion } from "framer-motion";
 
 interface RoomGridProps {
     initialRooms: (ChatRoom & { messages: ChatMessage[] })[];
@@ -28,10 +29,20 @@ interface RoomGridProps {
 export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
     const [fullscreenRoom, setFullscreenRoom] = useState<string | null>(null);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [showParticipants, setShowParticipants] = useState(false);
 
     // Get participant count for a room
     const getParticipantCount = (roomId: string) => {
         return roomParticipants[roomId]?.length || 0;
+    };
+
+    // Get all unique participants across all rooms
+    const getAllParticipants = () => {
+        const participants = new Set<string>();
+        Object.values(roomParticipants).forEach(roomUsers => {
+            roomUsers.forEach(user => participants.add(user));
+        });
+        return Array.from(participants);
     };
 
     // Sort rooms by message count
@@ -113,6 +124,71 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
+
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setShowParticipants(!showParticipants)}
+                                className="hover:bg-muted/80"
+                            >
+                                <Terminal className="h-4 w-4" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>View participants</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+
+                {showParticipants && (
+                    <Dialog open={showParticipants} onOpenChange={setShowParticipants}>
+                        <DialogContent className="bg-background/95 backdrop-blur-sm border-border p-0 overflow-hidden">
+                            <DialogHeader className="sr-only">
+                                <DialogTitle>Room Participants</DialogTitle>
+                            </DialogHeader>
+                            <motion.div 
+                                className="relative flex flex-col items-start min-w-[300px]"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                {/* Terminal header */}
+                                <div className="flex gap-2 w-full border-b border-border p-4 bg-muted/50">
+                                    <div className="h-3 w-3 rounded-full bg-red-500/50" />
+                                    <div className="h-3 w-3 rounded-full bg-yellow-500/50" />
+                                    <div className="h-3 w-3 rounded-full bg-green-500/50" />
+                                </div>
+
+                                {/* Terminal content */}
+                                <div className="w-full p-4 bg-background/50">
+                                    <div className="flex items-center gap-2 text-foreground mb-4">
+                                        <span className="text-muted-foreground">$</span>
+                                        <span>list participants</span>
+                                    </div>
+                                    <ScrollArea className="h-[300px] w-full">
+                                        <div className="space-y-2">
+                                            {getAllParticipants().map((participant, index) => (
+                                                <motion.div
+                                                    key={participant}
+                                                    className="flex items-center gap-2 text-foreground pl-4"
+                                                    initial={{ opacity: 0, x: -10 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: index * 0.1 }}
+                                                >
+                                                    <span className="text-muted-foreground">→</span>
+                                                    <span className="font-mono">{participant}</span>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    </ScrollArea>
+                                </div>
+                            </motion.div>
+                        </DialogContent>
+                    </Dialog>
+                )}
             </div>
 
             {viewMode === 'grid' ? (

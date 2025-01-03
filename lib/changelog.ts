@@ -11,10 +11,11 @@ export interface ChangelogEntry {
 export const changelog: ChangelogEntry[] = [
     {
         version: "2.3.3b",
-        date: "2025-01-03",
+        date: "2025-01-3",
         highlights: [
             "Added rooms sorting functionality",
-            "Implemented rows sorting based on message count"
+            "Implemented rows sorting based on message count",
+            "Introduced list participants feature"
         ],
         changes: [
             {
@@ -24,6 +25,10 @@ export const changelog: ChangelogEntry[] = [
             {
                 type: "improvement",
                 description: "Implemented rows sorting functionality, arranging rooms from most messages to least for better organization"
+            },
+            {
+                type: "feature",
+                description: "Introduced list participants feature, enabling users to view all active members in a room"
             }
         ]
     },
