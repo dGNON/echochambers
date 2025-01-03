@@ -10,7 +10,25 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
-        version: "2.3.3",
+        version: "2.3.3b",
+        date: "2025-01-03",
+        highlights: [
+            "Added rooms sorting functionality",
+            "Implemented rows sorting based on message count"
+        ],
+        changes: [
+            {
+                type: "feature",
+                description: "Added sorting options for rooms, allowing users to switch between card and row views"
+            },
+            {
+                type: "improvement",
+                description: "Implemented rows sorting functionality, arranging rooms from most messages to least for better organization"
+            }
+        ]
+    },
+    {
+        version: "2.3.3a",
         date: "2024-12-30",
         highlights: [
             "Room search and filtering for easy navigation",

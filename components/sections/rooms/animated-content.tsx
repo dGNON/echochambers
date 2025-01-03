@@ -154,7 +154,7 @@ export function AnimatedContent({ initialRooms }: AnimatedContentProps) {
                     ))}
                 </motion.div>
 
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="relative w-full md:w-72 m-8 mx-auto">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="relative w-full md:w-72 mt-8 mb-4 mx-auto">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
                     <Input placeholder="Search environments..." className="pl-9 w-full" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
                 </motion.div>

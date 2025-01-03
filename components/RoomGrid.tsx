@@ -11,7 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Maximize2, Users, MessageSquare, Activity, Brain, BarChart2, ArrowLeft, Plus, Gauge, Beaker, Search } from "lucide-react";
+import { Maximize2, Users, MessageSquare, Activity, Brain, BarChart2, ArrowLeft, Plus, Gauge, Beaker, Search, LayoutGrid, List } from "lucide-react";
 import { ChatRoom } from "@/server/types";
 import { ChatMessage } from "@/server/types";
 import { ChatWindow } from "./ChatWindow";
@@ -27,14 +27,18 @@ interface RoomGridProps {
 
 export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
     const [fullscreenRoom, setFullscreenRoom] = useState<string | null>(null);
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
     // Get participant count for a room
     const getParticipantCount = (roomId: string) => {
         return roomParticipants[roomId]?.length || 0;
     };
 
+    // Sort rooms by message count
+    const sortedRooms = [...initialRooms].sort((a, b) => b.messageCount - a.messageCount);
+
     if (fullscreenRoom) {
-        const room = initialRooms.find((r) => r.id === fullscreenRoom);
+        const room = sortedRooms.find((r) => r.id === fullscreenRoom);
         if (!room) return null;
 
         return (
@@ -86,46 +90,111 @@ export function RoomGrid({ initialRooms, roomParticipants }: RoomGridProps) {
     }
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {initialRooms.map((room) => (
-                <div key={room.id} className="group relative overflow-hidden rounded-xl border bg-gradient-to-b from-muted/50 to-muted/0 backdrop-blur-sm transition-colors hover:bg-muted/50 flex flex-col h-[444px]">
-                    <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-primary/0 opacity-0 transition-opacity group-hover:opacity-100" />
-                    <div className="relative px-3 py-2 h-[180px] flex flex-col justify-between">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-md font-semibold text-primary group-hover:text-primary/80 transition-colors break-all overflow-hidden text-ellipsis">{room.name}</h3>
-                            <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setFullscreenRoom(room.id)}>
-                                <Maximize2 className="h-4 w-4" />
+        <div className="space-y-4">
+            <div className="flex justify-center gap-2">
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+                                className="hover:bg-muted/80"
+                            >
+                                {viewMode === 'grid' ? (
+                                    <List className="h-4 w-4" />
+                                ) : (
+                                    <LayoutGrid className="h-4 w-4" />
+                                )}
                             </Button>
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-2 break-all whitespace-pre-wrap overflow-hidden">{room.topic}</p>
-                        <div className="flex flex-wrap gap-1 mb-2">
-                            {room.tags.map((tag) => (
-                                <Badge key={tag} variant="outline" className="bg-background/90 px-2 py-2 break-all whitespace-pre-wrap">
-                                    {tag}
-                                </Badge>
-                            ))}
-                        </div>
-                        <div className="flex items-center gap-4 text-sm mb-2">
-                            <div className="flex items-center gap-1.5">
-                                <Users className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                                <span className="font-medium break-all whitespace-pre-wrap">{getParticipantCount(room.id)} participants</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Toggle view mode</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
+
+            {viewMode === 'grid' ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {sortedRooms.map((room) => (
+                        <div key={room.id} className="group relative overflow-hidden rounded-xl border bg-gradient-to-b from-muted/50 to-muted/0 backdrop-blur-sm transition-colors hover:bg-muted/50 flex flex-col h-[444px]">
+                            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-primary/0 opacity-0 transition-opacity group-hover:opacity-100" />
+                            <div className="relative px-3 py-2 h-[180px] flex flex-col justify-between">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="text-md font-semibold text-primary group-hover:text-primary/80 transition-colors break-all overflow-hidden text-ellipsis">{room.name}</h3>
+                                    <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setFullscreenRoom(room.id)}>
+                                        <Maximize2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                                <p className="text-sm text-muted-foreground mb-2 break-all whitespace-pre-wrap overflow-hidden">{room.topic}</p>
+                                <div className="flex flex-wrap gap-1 mb-2">
+                                    {room.tags.map((tag) => (
+                                        <Badge key={tag} variant="outline" className="bg-background/90 px-2 py-2 break-all whitespace-pre-wrap">
+                                            {tag}
+                                        </Badge>
+                                    ))}
+                                </div>
+                                <div className="flex items-center gap-4 text-sm mb-2">
+                                    <div className="flex items-center gap-1.5">
+                                        <Users className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                        <span className="font-medium break-all whitespace-pre-wrap">{getParticipantCount(room.id)} participants</span>
+                                    </div>
+                                    <Separator orientation="vertical" className="h-4 shrink-0" />
+                                    <div className="flex items-center gap-1.5">
+                                        <MessageSquare className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                        <span className="font-medium break-all whitespace-pre-wrap">{room.messageCount} messages</span>
+                                    </div>
+                                </div>
                             </div>
-                            <Separator orientation="vertical" className="h-4 shrink-0" />
-                            <div className="flex items-center gap-1.5">
-                                <MessageSquare className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                                <span className="font-medium break-all whitespace-pre-wrap">{room.messageCount} messages</span>
+                            <div className="relative flex-1 overflow-hidden border-t bg-muted/5">
+                                <ChatWindow 
+                                    key={`preview-${room.id}`}
+                                    roomId={room.id} 
+                                    initialMessages={room.messages} 
+                                />
                             </div>
                         </div>
-                    </div>
-                    <div className="relative flex-1 overflow-hidden border-t bg-muted/5">
-                        <ChatWindow 
-                            key={`preview-${room.id}`}
-                            roomId={room.id} 
-                            initialMessages={room.messages} 
-                        />
-                    </div>
+                    ))}
                 </div>
-            ))}
+            ) : (
+                <div className="space-y-4">
+                    {sortedRooms.map((room) => (
+                        <div key={room.id} className="group relative overflow-hidden rounded-xl border bg-gradient-to-b from-muted/50 to-muted/0 backdrop-blur-sm transition-colors hover:bg-muted/50">
+                            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-primary/0 opacity-0 transition-opacity group-hover:opacity-100" />
+                            <div className="relative p-4 flex items-center justify-between">
+                                <div className="flex-1 min-w-0 mr-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="text-md font-semibold text-primary group-hover:text-primary/80 transition-colors break-all overflow-hidden text-ellipsis">{room.name}</h3>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground mb-2 break-all whitespace-pre-wrap overflow-hidden">{room.topic}</p>
+                                    <div className="flex flex-wrap gap-1 mb-2">
+                                        {room.tags.map((tag) => (
+                                            <Badge key={tag} variant="outline" className="bg-background/90 px-2 py-2 break-all whitespace-pre-wrap">
+                                                {tag}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                    <div className="flex items-center gap-4 text-sm">
+                                        <div className="flex items-center gap-1.5">
+                                            <Users className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                            <span className="font-medium break-all whitespace-pre-wrap">{getParticipantCount(room.id)} participants</span>
+                                        </div>
+                                        <Separator orientation="vertical" className="h-4 shrink-0" />
+                                        <div className="flex items-center gap-1.5">
+                                            <MessageSquare className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                            <span className="font-medium break-all whitespace-pre-wrap">{room.messageCount} messages</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setFullscreenRoom(room.id)}>
+                                    <Maximize2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
