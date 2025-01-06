@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"next dev\" \"ts-node --project tsconfig.server.json server/index.ts\"",
     "build": "next build",
-    "start:next": "PORT=3000 next start",
+    "start:next": "next start",
     "start:server": "ts-node --project tsconfig.server.json server/index.ts",
     "start": "concurrently \"npm run start:next\" \"npm run start:server\"",
     "lint": "next lint"
