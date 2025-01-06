@@ -8,44 +8,34 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, X, ChevronUp, ChevronDown, ChevronRight, ChevronDown as Expand } from "lucide-react";
+import { Plus, X, ChevronUp, ChevronDown, ChevronRight, ChevronDown as Expand, Loader2, Sparkles } from "lucide-react";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { DEFAULT_STEPS, DEFAULT_STEP, DEFAULT_STEP_PARAMS } from "@/lib/config-utils";
 import { StepPrompt, StepParams } from "../types";
+import { refinePrompt } from "@/lib/prompt-service";
+import { toast } from "sonner";
 
 interface StepsTabProps {
-    stepPrompts?: StepPrompt[];
-    onStepPromptsChange?: (steps: StepPrompt[]) => void;
+    steps: StepPrompt[];
+    onStepsChange: (steps: StepPrompt[]) => void;
 }
 
 const defaultParams: StepParams = DEFAULT_STEP_PARAMS;
 
-export function StepsTab({ stepPrompts: externalSteps = DEFAULT_STEPS, onStepPromptsChange }: StepsTabProps) {
+export function StepsTab({ steps: externalSteps = DEFAULT_STEPS, onStepsChange }: StepsTabProps) {
     const [steps, setSteps] = useLocalStorage<StepPrompt[]>(STORAGE_KEYS.STEPS_CONFIG, externalSteps);
     const [expandedStep, setExpandedStep] = useState<number | null>(null);
+    const [refiningStep, setRefiningStep] = useState<number | null>(null);
 
     const handleStepChange = (index: number, updates: Partial<StepPrompt>) => {
-        const newSteps = steps.map((step, i) => {
-            if (i !== index) return step;
-            
-            // If we're updating customParams to false, remove the params object
-            if ('customParams' in updates && updates.customParams === false) {
-                const { name, prompt, checkpoint, customParams } = { ...step, ...updates };
-                return { name, prompt, checkpoint, customParams };
-            }
-            
-            // If we're enabling customParams, initialize the params object
-            if ('customParams' in updates && updates.customParams === true && !step.params) {
-                return { ...step, ...updates, params: { ...defaultParams } };
-            }
-            
-            return { ...step, ...updates };
-        });
+        const newSteps = steps.map((step, i) => 
+            i === index ? { ...step, ...updates } : step
+        );
         setSteps(newSteps);
-        onStepPromptsChange?.(newSteps);
+        onStepsChange(newSteps);
     };
 
     const handleParamChange = (index: number, paramUpdates: Partial<StepParams>) => {
@@ -57,21 +47,43 @@ export function StepsTab({ stepPrompts: externalSteps = DEFAULT_STEPS, onStepPro
             };
         });
         setSteps(newSteps);
-        onStepPromptsChange?.(newSteps);
+        onStepsChange(newSteps);
+    };
+
+    const handleRefineStep = async (index: number) => {
+        if (refiningStep !== null) return;
+        
+        setRefiningStep(index);
+        try {
+            const stepName = steps[index].name || `Step ${index + 1}`;
+            const improvedPrompt = await refinePrompt(`[Step Name: ${stepName}]\n${steps[index].prompt}\n\nAdhere to the Step Name. The content generated should complement the Step Name.`);
+            if (improvedPrompt) {
+                handleStepChange(index, { prompt: improvedPrompt });
+                toast.success(`${stepName} refined successfully`);
+            } else {
+                throw new Error('Failed to generate improved prompt');
+            }
+        } catch (error) {
+            console.error('Error refining step:', error);
+            const stepName = steps[index].name || `Step ${index + 1}`;
+            toast.error(`Failed to refine ${stepName}`);
+        } finally {
+            setRefiningStep(null);
+        }
     };
 
     const handleAddStep = () => {
         const newStep = { ...DEFAULT_STEP };
         const newSteps = [...steps, newStep];
         setSteps(newSteps);
-        onStepPromptsChange?.(newSteps);
+        onStepsChange(newSteps);
         setExpandedStep(newSteps.length - 1);
     };
 
     const handleRemoveStep = (index: number) => {
         const newSteps = steps.filter((_, i) => i !== index);
         setSteps(newSteps);
-        onStepPromptsChange?.(newSteps);
+        onStepsChange(newSteps);
         if (expandedStep === index) setExpandedStep(null);
     };
 
@@ -81,7 +93,7 @@ export function StepsTab({ stepPrompts: externalSteps = DEFAULT_STEPS, onStepPro
         const newSteps = [...steps];
         [newSteps[index], newSteps[newIndex]] = [newSteps[newIndex], newSteps[index]];
         setSteps(newSteps);
-        onStepPromptsChange?.(newSteps);
+        onStepsChange(newSteps);
         setExpandedStep(newIndex);
     };
 
@@ -112,7 +124,19 @@ export function StepsTab({ stepPrompts: externalSteps = DEFAULT_STEPS, onStepPro
                                             </Button>
                                         </div>
                                         <div className="flex items-center gap-2 ml-auto">
-                                            <Label className="text-xs sm:text-sm">Custom Parameters</Label>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 relative"
+                                                onClick={() => handleRefineStep(index)}
+                                                disabled={refiningStep !== null}
+                                            >
+                                                <Sparkles className={`h-4 w-4 transition-opacity ${refiningStep === index ? 'opacity-0' : 'opacity-100'}`} />
+                                                {refiningStep === index && (
+                                                    <Loader2 className="h-4 w-4 animate-spin absolute inset-0 m-auto" />
+                                                )}
+                                            </Button>
+                                            <Label className="text-xs sm:text-sm">Parameters</Label>
                                             <Switch checked={step.customParams} onCheckedChange={(checked) => handleStepChange(index, { customParams: checked })} />
                                             <Label className="text-xs sm:text-sm ml-4">Checkpoint</Label>
                                             <Switch checked={step.checkpoint} onCheckedChange={(checked) => handleStepChange(index, { checkpoint: checked })} />
@@ -122,7 +146,7 @@ export function StepsTab({ stepPrompts: externalSteps = DEFAULT_STEPS, onStepPro
                                 <AnimatePresence>
                                     {expandedStep === index && (
                                         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} className="space-y-4 mt-3">
-                                            <Textarea value={step.prompt || ""} onChange={(e) => handleStepChange(index, { prompt: e.target.value })} placeholder="Enter the prompt for this step..." className="text-sm min-h-[50px] resize-y w-full" />
+                                            <Textarea value={step.prompt || ""} onChange={(e) => handleStepChange(index, { prompt: e.target.value })} placeholder="Enter the prompt for this step..." className="text-sm min-h-[99px] resize-y w-full" />
                                             
                                             {step.customParams && (
                                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4 p-4 rounded-lg border bg-background/50">

@@ -92,14 +92,6 @@ export function PlaygroundWorkspace() {
     const startXRef = useRef(0);
     const scrollLeftRef = useRef(0);
 
-    const handleMouseDown = (e: React.MouseEvent) => {
-        isDraggingRef.current = true;
-        startXRef.current = e.pageX;
-        if (scrollContainerRef.current) {
-            scrollLeftRef.current = scrollContainerRef.current.scrollLeft;
-        }
-    };
-
     const handleMouseMove = (e: MouseEvent) => {
         if (!isDraggingRef.current) return;
 

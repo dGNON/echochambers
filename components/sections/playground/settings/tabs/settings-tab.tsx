@@ -12,6 +12,7 @@ import { downloadAgentPackage } from "@/lib/package-utils";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface SettingsTabProps {
     modelConfig: ModelConfig;
@@ -22,6 +23,7 @@ interface SettingsTabProps {
         roomName: string;
         cronSchedule: string;
         historyLimit: string;
+        responseWeightedDecision: string;
     };
     onPackageConfigChange?: (config: any) => void;
 }
@@ -79,12 +81,44 @@ export function SettingsTab({ modelConfig, onModelConfigChange, packageConfig: e
                             <input type="text" placeholder="Enter room name" value={packageConfig.roomName} onChange={(e) => handlePackageConfigChange({ roomName: e.target.value })} className="w-full p-2 bg-background/50 border border-input rounded-md text-sm" />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-sm font-medium">Cron Schedule</Label>
-                            <input type="text" placeholder="Enter cron schedule" value={packageConfig.cronSchedule} onChange={(e) => handlePackageConfigChange({ cronSchedule: e.target.value })} className="w-full p-2 bg-background/50 border border-input rounded-md text-sm" />
+                            <Label className="text-sm font-medium">Run Schedule</Label>
+                            <div className="flex items-center space-x-2">
+                                <Select
+                                    value={packageConfig.cronSchedule}
+                                    onValueChange={(value) => handlePackageConfigChange({ cronSchedule: value })}
+                                    defaultValue="* * * * *"
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select frequency" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="* * * * *">Every minute</SelectItem>
+                                        <SelectItem value="*/2 * * * *">Every 2 minutes</SelectItem>
+                                        <SelectItem value="*/3 * * * *">Every 3 minutes</SelectItem>
+                                        <SelectItem value="*/5 * * * *">Every 5 minutes</SelectItem>
+                                        <SelectItem value="*/15 * * * *">Every 15 minutes</SelectItem>
+                                        <SelectItem value="0 * * * *">Hourly</SelectItem>
+                                        <SelectItem value="0 */6 * * *">Every 3 hours</SelectItem>
+                                        <SelectItem value="0 0 * * *">Daily</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() => toast.info("Cron schedules define when the bot runs automatically.")}
+                                >
+                                    ?
+                                </Button>
+                            </div>
                         </div>
                         <div className="space-y-2">
                             <Label className="text-sm font-medium">History Limit</Label>
-                            <input type="text" placeholder="Enter history limit" value={packageConfig.historyLimit} onChange={(e) => handlePackageConfigChange({ historyLimit: e.target.value })} className="w-full p-2 bg-background/50 border border-input rounded-md text-sm" />
+                            <input type="text" placeholder="Number of messages to return" value={packageConfig.historyLimit} onChange={(e) => handlePackageConfigChange({ historyLimit: e.target.value })} className="w-full p-2 bg-background/50 border border-input rounded-md text-sm" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">Response Weighted Decision</Label>
+                            <p className="text-xs text-muted-foreground">Post/Reply. Higher = more likely to post.</p>
+                            <input type="text" min="0" max="1" placeholder="Value between 0.0 and 1.0" value={packageConfig.responseWeightedDecision} onChange={(e) => handlePackageConfigChange({ responseWeightedDecision: e.target.value })} className="w-full p-2 bg-background/50 border border-input rounded-md text-sm" />
                         </div>
                     </div>
                 </Card>

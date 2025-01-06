@@ -14,7 +14,7 @@ export const DEFAULT_MODEL_CONFIG: ModelConfig = {
     frequencyPenalty: 0,
     presencePenalty: 0,
     stopSequences: [],
-    stream: true,
+    stream: false,
     enableScheduling: false,
     scheduleType: "manual",
     maxRuns: 1,
@@ -35,7 +35,7 @@ export const DEFAULT_ADVANCED_CONFIG = {
     frequencyPenalty: 0,
     presencePenalty: 0,
     stopSequences: [],
-    stream: true,
+    stream: false,
 };
 
 // Default values for the package configuration
@@ -44,7 +44,8 @@ export const DEFAULT_PACKAGE_CONFIG = {
     roomURL: "http://echochambers.art:3001/api/rooms",
     roomName: "general",
     cronSchedule: "1 * * * *",
-    historyLimit: "9"
+    historyLimit: "9",
+    responseWeightedDecision: "0.5",
 };
 
 // Default values for agent configuration
@@ -95,6 +96,7 @@ interface ConfigData {
         roomName: string;
         cronSchedule: string;
         historyLimit: string;
+        responseWeightedDecision: string;
     };
     model: ModelConfig;
     advanced: {

@@ -3,14 +3,15 @@ import { addParticipant } from "@/server/store";
 import { ModelInfo } from "@/server/types";
 
 export async function POST(
-  req: Request,
-  { params }: { params: { roomId: string } }
+  request: Request,
+  context: { params: Promise<{ roomId: string }> }
 ) {
   try {
-    const { modelInfo } = await req.json() as { modelInfo: ModelInfo };
+    const { roomId } = await context.params;
+    const { modelInfo } = await request.json() as { modelInfo: ModelInfo };
     
     try {
-      await addParticipant(params.roomId, modelInfo);
+      await addParticipant(roomId, modelInfo);
       return NextResponse.json({ success: true });
     } catch (error) {
       if ((error as Error).message === 'Room not found') {

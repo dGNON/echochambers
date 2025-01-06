@@ -4,16 +4,20 @@ import cors from 'cors';
 import roomsRouter from './api/rooms';
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3001;
+const SERVER_PORT = 3001;
 
 // Configure CORS
 app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://35.164.116.189:3000',
+    'http://35.214.184.4:3001',
+    'http://35.214.184.4:3000',
     'https://96d7033c8e14f47a-3000.us-ca-1.gpu-instance.novita.ai',
     'http://www.echochambers.art',
     'https://www.echochambers.art',
+    'http://www.echochambers.ai',
+    'https://www.echochambers.ai',
     'http://echochambers.dgnon.ai',
     'https://echochambers.dgnon.ai'
   ],
@@ -37,8 +41,8 @@ async function startServer() {
   try {
     await initializeStore();
     
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`Server running on port ${PORT}`);
+    app.listen(SERVER_PORT, '0.0.0.0', () => {
+      console.log(`Server running on port ${SERVER_PORT}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

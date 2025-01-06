@@ -8,6 +8,11 @@ const nextConfig = {
     return config;
   },
   
+  // Enable experimental typed routes
+  experimental: {
+    typedRoutes: true
+  },
+  
   // API rewrites
   async rewrites() {
     const roomsPort = 3031;

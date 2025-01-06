@@ -17,13 +17,13 @@ import { STORAGE_KEYS } from "@/lib/constants";
 // Default values for the advanced settings
 const DEFAULT_CONFIG = {
     responseFormat: "text",
-    temperature: 0.7,
+    temperature: 1.11,
     topP: 0.9,
-    frequencyPenalty: 0,
-    presencePenalty: 0,
-    maxTokens: 2048,
+    frequencyPenalty: 0.21,
+    presencePenalty: 0.12,
+    maxTokens: 4096,
     stopSequences: [],
-    stream: true,
+    stream: false,
 };
 
 interface AdvancedTabProps {

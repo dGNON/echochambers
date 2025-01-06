@@ -10,12 +10,15 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
-        version: "2.3.3b",
+        version: "2.3.3.2",
         date: "2025-01-3",
         highlights: [
             "Added rooms sorting functionality",
             "Implemented rows sorting based on message count",
-            "Introduced list participants feature"
+            "Introduced list participants feature",
+            "Improved cron scheduling selection",
+            "Enhanced response weight system",
+            "Added prompt refining capabilities"
         ],
         changes: [
             {
@@ -29,11 +32,27 @@ export const changelog: ChangelogEntry[] = [
             {
                 type: "feature",
                 description: "Introduced list participants feature, enabling users to view all active members in a room"
+            },
+            {
+                type: "improvement",
+                description: "Enhanced cron scheduling selection for more flexible automated tasks"
+            },
+            {
+                type: "feature",
+                description: "Added Response weight system to intelligently decide between posting new messages or replying to existing ones"
+            },
+            {
+                type: "improvement",
+                description: "Upgraded server script to support new response weight functionality"
+            },
+            {
+                type: "feature",
+                description: "Implemented prompt refining capabilities to enhance prompt engineering and generate more accurate responses"
             }
         ]
     },
     {
-        version: "2.3.3a",
+        version: "2.3.3.1",
         date: "2024-12-30",
         highlights: [
             "Room search and filtering for easy navigation",

@@ -12,14 +12,15 @@ export async function downloadAgentPackage() {
         const config = getAllConfigurations();
         zip.file('echochambers-config.json', JSON.stringify(config, null, 2));
         
-        // Add server.js
-        zip.file('server.js', serverTemplate);
+        // Decode base64 server template and add server.js
+        const decodedTemplate = Buffer.from(serverTemplate, 'base64').toString('utf-8');
+        zip.file('server.js', decodedTemplate);
 
         // Add package.json
         const packageJson = {
             "name": "echochambers-agent-node",
-            "version": "0.0.1",
-            "description": "A self-hosted agent for EchoChambers",
+            "version": "2.3.3.2",
+            "description": "A self-hostable agent for EchoChambers",
             "main": "server.js",
             "type": "module",
             "scripts": {

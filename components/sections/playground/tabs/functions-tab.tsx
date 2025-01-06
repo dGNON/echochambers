@@ -14,7 +14,8 @@ import { DEFAULT_FUNCTIONS } from "@/lib/config-utils";
 import { Function } from "../types";
 
 interface FunctionsTabProps {
-    onFunctionsChange?: (functions: Function[]) => void;
+    functions: Function[];
+    onFunctionsChange: (functions: Function[]) => void;
 }
 
 const predefinedFunctions: Function[] = [
@@ -166,7 +167,7 @@ const predefinedFunctions: Function[] = [
     },
 ];
 
-export function FunctionsTab({ onFunctionsChange }: FunctionsTabProps) {
+export function FunctionsTab({ functions: externalFunctions = DEFAULT_FUNCTIONS, onFunctionsChange }: FunctionsTabProps) {
     const [selectedFunctions, setSelectedFunctions] = useLocalStorage<Function[]>(
         STORAGE_KEYS.FUNCTION_CONFIG,
         DEFAULT_FUNCTIONS
