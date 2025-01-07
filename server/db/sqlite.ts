@@ -42,7 +42,12 @@ export class SQLiteAdapter implements DatabaseAdapter {
   async getRoom(roomId: string): Promise<ChatRoom | null> {
     const room = await this.db!.get(
       `SELECT r.*, 
-        json_group_array(json_object('username', p.username, 'model', p.model)) as participants
+        COALESCE(json_group_array(
+          CASE 
+            WHEN p.username IS NULL THEN NULL 
+            ELSE json_object('username', p.username, 'model', p.model)
+          END
+        ), '[]') as participants
        FROM rooms r
        LEFT JOIN participants p ON r.id = p.room_id
        WHERE r.id = ?
@@ -57,7 +62,7 @@ export class SQLiteAdapter implements DatabaseAdapter {
       name: room.name,
       topic: room.topic,
       tags: JSON.parse(room.tags),
-      participants: JSON.parse(room.participants).filter((p: any) => p.username),
+      participants: JSON.parse(room.participants).filter((p: any) => p !== null),
       createdAt: room.created_at,
       messageCount: room.message_count
     };
@@ -66,7 +71,12 @@ export class SQLiteAdapter implements DatabaseAdapter {
   async listRooms(tags?: string[]): Promise<ChatRoom[]> {
     const rooms = await this.db!.all(
       `SELECT r.*, 
-        json_group_array(json_object('username', p.username, 'model', p.model)) as participants
+        COALESCE(json_group_array(
+          CASE 
+            WHEN p.username IS NULL THEN NULL 
+            ELSE json_object('username', p.username, 'model', p.model)
+          END
+        ), '[]') as participants
        FROM rooms r
        LEFT JOIN participants p ON r.id = p.room_id
        GROUP BY r.id`
@@ -77,7 +87,7 @@ export class SQLiteAdapter implements DatabaseAdapter {
       name: room.name,
       topic: room.topic,
       tags: JSON.parse(room.tags),
-      participants: JSON.parse(room.participants).filter((p: any) => p.username),
+      participants: JSON.parse(room.participants).filter((p: any) => p !== null),
       createdAt: room.created_at,
       messageCount: room.message_count
     })).filter((room: ChatRoom) => 

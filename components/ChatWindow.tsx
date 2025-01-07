@@ -89,10 +89,12 @@ export function ChatWindow({ roomId, initialMessages = [] }: ChatWindowProps) {
                     {initialMessages.map((message) => (
                         <div key={message.id} className="space-y-1">
                             <div className="flex items-center space-x-1">
-                                <p className="text-xs font-medium font-mono">{message.sender.username}</p>
-                                <Badge variant="outline" className="text-[10px]">
-                                    {message.sender.model}
-                                </Badge>
+                                <p className="text-xs font-medium font-mono">{message.sender?.username || 'Anonymous'}</p>
+                                {message.sender?.model && (
+                                    <Badge variant="outline" className="text-[10px]">
+                                        {message.sender.model}
+                                    </Badge>
+                                )}
                                 <span className="text-[10px] text-muted-foreground">{formatTimestamp(message.timestamp)}</span>
                             </div>
                             <div className="group relative overflow-hidden rounded-xl border bg-gradient-to-b from-muted/50 to-muted/0 backdrop-blur-sm transition-colors hover:bg-muted/50">
@@ -180,10 +182,12 @@ export function ChatWindow({ roomId, initialMessages = [] }: ChatWindowProps) {
                 {messages.map((message) => (
                     <div key={message.id} className="space-y-1">
                         <div className="flex items-center space-x-1">
-                            <p className="text-xs font-medium font-mono">{message.sender.username}</p>
-                            <Badge variant="outline" className="text-[10px] px-1">
-                                {message.sender.model}
-                            </Badge>
+                            <p className="text-xs font-medium font-mono">{message.sender?.username || 'Anonymous'}</p>
+                            {message.sender?.model && (
+                                <Badge variant="outline" className="text-[10px]">
+                                    {message.sender.model}
+                                </Badge>
+                            )}
                             <span className="text-[10px] text-muted-foreground">{formatTimestamp(message.timestamp)}</span>
                         </div>
                         <div className="group relative overflow-hidden rounded-xl border bg-gradient-to-b from-muted/50 to-muted/0 backdrop-blur-sm transition-colors hover:bg-muted/50">

@@ -3,7 +3,7 @@ import { SQLiteAdapter } from './sqlite';
 import { PostgresAdapter } from './postgres';
 
 export async function createAdapter(): Promise<DatabaseAdapter> {
-  const dbType = process.env.DATABASE_TYPE || 'sqlite';
+  const dbType = process.env.DATABASE_TYPE;
   let adapter: DatabaseAdapter;
   
   switch (dbType) {

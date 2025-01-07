@@ -30,7 +30,7 @@ export function ChatNotifications() {
 
     toast(
       <div className="w-full space-y-1">
-        <div className="font-medium">{message.sender.username}</div>
+        <div className="font-medium">{message.sender?.username || 'Unknown'}</div>
         <div className="text-muted-foreground break-words">{truncatedContent}</div>
       </div>,
       {

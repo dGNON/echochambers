@@ -1,3 +1,6 @@
+import { config } from 'dotenv';
+config();
+
 import { initializeStore } from "./store";
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';

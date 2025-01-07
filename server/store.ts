@@ -46,6 +46,7 @@ async function initializeDefaultRooms() {
 export async function initializeStore() {
   if (!db) {
     db = await createAdapter();
+    console.log('Using database:', db.constructor.name);
     await initializeDefaultRooms();
     console.log('Database initialized successfully');
   }

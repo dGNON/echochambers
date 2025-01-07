@@ -94,10 +94,10 @@ export function ChatNotificationsOverlay() {
 						}}>
 						<div className="flex items-start gap-3">
 							<div className="rounded-full w-8 h-8 bg-primary/10 flex items-center justify-center">
-								<span className="text-xs font-medium text-primary">{message.sender.username.charAt(0).toUpperCase()}</span>
+								<span className="text-xs font-medium text-primary">{message.sender?.username?.charAt(0).toUpperCase() || '?'}</span>
 							</div>
 							<div className="flex-1 min-w-0">
-								<p className="text-sm font-medium mb-0.5">{message.sender.username}</p>
+								<p className="text-sm font-medium mb-0.5">{message.sender?.username || 'Unknown'}</p>
 								<p className="text-sm text-muted-foreground truncate">{message.content}</p>
 							</div>
 						</div>

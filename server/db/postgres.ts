@@ -47,12 +47,12 @@ export class PostgresAdapter implements DatabaseAdapter {
       const id = room.name.toLowerCase().replace('#', '') || crypto.randomUUID();
       await client.query(
         `INSERT INTO rooms (id, name, topic, tags, created_at, message_count)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
+         VALUES ($1, $2, $3, $4::jsonb, $5, $6)`,
         [
           id,
           room.name,
           room.topic,
-          JSON.stringify(room.tags),
+          JSON.stringify((room.tags || []).map(tag => tag.toLowerCase())),
           new Date().toISOString(),
           0
         ]
@@ -85,23 +85,47 @@ export class PostgresAdapter implements DatabaseAdapter {
   
   async getRoom(roomId: string): Promise<ChatRoom | null> {
     const { rows: [room] } = await this.pool!.query(
-      `SELECT r.*,
-        json_agg(json_build_object('username', p.username, 'model', p.model)) as participants
+      `SELECT r.id,
+        r.name,
+        r.topic,
+        r.created_at,
+        r.message_count,
+        COALESCE(
+          (SELECT array_agg(DISTINCT key)
+           FROM jsonb_each(r.tags)
+           WHERE jsonb_typeof(r.tags) = 'object'
+          ),
+          CASE 
+            WHEN jsonb_typeof(r.tags) = 'array' THEN (
+              SELECT array_agg(DISTINCT value::text)
+              FROM jsonb_array_elements(r.tags)
+            )
+            ELSE ARRAY[]::text[]
+          END
+        ) as tags,
+        COALESCE(
+          (SELECT json_agg(row_to_json(p.*))
+           FROM (
+             SELECT username, model
+             FROM participants
+             WHERE room_id = r.id
+           ) p
+          ),
+          '[]'
+        ) as participants
        FROM rooms r
-       LEFT JOIN participants p ON r.id = p.room_id
-       WHERE r.id = $1
-       GROUP BY r.id`,
+       WHERE r.id = $1`,
       [roomId]
     );
     
     if (!room) return null;
-    
+
     return {
       id: room.id,
       name: room.name,
       topic: room.topic,
-      tags: room.tags,
-      participants: room.participants.filter((p: any) => p.username),
+      tags: room.tags || [],
+      participants: room.participants || [],
       createdAt: room.created_at,
       messageCount: room.message_count
     };
@@ -111,7 +135,7 @@ export class PostgresAdapter implements DatabaseAdapter {
     const updates: string[] = [];
     const values: any[] = [roomId];
     let paramCount = 2;
-    
+
     if (room.name) {
       updates.push(`name = $${paramCount}`);
       values.push(room.name);
@@ -123,8 +147,8 @@ export class PostgresAdapter implements DatabaseAdapter {
       paramCount++;
     }
     if (room.tags) {
-      updates.push(`tags = $${paramCount}`);
-      values.push(JSON.stringify(room.tags));
+      updates.push(`tags = $${paramCount}::jsonb`);
+      values.push(JSON.stringify(room.tags.map(tag => tag.toLowerCase())));
       paramCount++;
     }
     
@@ -140,20 +164,60 @@ export class PostgresAdapter implements DatabaseAdapter {
 
   async listRooms(tags?: string[]): Promise<ChatRoom[]> {
     let query = `
-      SELECT r.*,
-        json_agg(json_build_object('username', p.username, 'model', p.model)) as participants
-      FROM rooms r
-      LEFT JOIN participants p ON r.id = p.room_id
-      GROUP BY r.id
-    `;
-    
+      SELECT r.id,
+        r.name,
+        r.topic,
+        r.created_at,
+        r.message_count,
+        COALESCE(
+          (SELECT array_agg(DISTINCT key)
+           FROM jsonb_each(r.tags)
+           WHERE jsonb_typeof(r.tags) = 'object'
+          ),
+          CASE 
+            WHEN jsonb_typeof(r.tags) = 'array' THEN (
+              SELECT array_agg(DISTINCT value::text)
+              FROM jsonb_array_elements(r.tags)
+            )
+            ELSE ARRAY[]::text[]
+          END
+        ) as tags,
+        COALESCE(
+          (SELECT json_agg(row_to_json(p.*))
+           FROM (
+             SELECT username, model
+             FROM participants
+             WHERE room_id = r.id
+           ) p
+          ),
+          '[]'
+        ) as participants
+       FROM rooms r`;
+
     if (tags?.length) {
-      query += ` HAVING r.tags ?| $1`;
+      query += ` WHERE r.tags ?| $1`;
       const { rows } = await this.pool!.query(query, [tags]);
-      return this.mapRoomsFromRows(rows);
+      return rows.map(row => ({
+        id: row.id,
+        name: row.name,
+        topic: row.topic,
+        tags: row.tags || [],
+        participants: row.participants || [],
+        createdAt: row.created_at,
+        messageCount: row.message_count
+      }));
     } else {
+      query += ` ORDER BY r.created_at DESC`;
       const { rows } = await this.pool!.query(query);
-      return this.mapRoomsFromRows(rows);
+      return rows.map(row => ({
+        id: row.id,
+        name: row.name,
+        topic: row.topic,
+        tags: row.tags || [],
+        participants: row.participants || [],
+        createdAt: row.created_at,
+        messageCount: row.message_count
+      }));
     }
   }
 
@@ -261,7 +325,7 @@ export class PostgresAdapter implements DatabaseAdapter {
       name: row.name,
       topic: row.topic,
       tags: row.tags,
-      participants: row.participants.filter((p: any) => p.username),
+      participants: row.participants,
       createdAt: row.created_at,
       messageCount: row.message_count
     }));
